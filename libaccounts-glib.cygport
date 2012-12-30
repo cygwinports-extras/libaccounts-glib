@@ -1,0 +1,33 @@
+inherit gnome2 python python3
+
+NAME="libaccounts-glib"
+VERSION=1.4
+RELEASE=1
+CATEGORY="GNOME"
+SUMMARY="GObject online accounts library"
+DESCRIPTION="The Accounts & SSO framework consists of a set of components and
+libraries which implement an account manager for a user's online accounts and a
+single-sign-on daemon which handles the authentication to the remote services
+on behalf of the client applications."
+HOMEPAGE="http://code.google.com/p/accounts-sso/"
+SRC_URI="http://accounts-sso.googlecode.com/files/${NAME}-${VERSION}.tar.gz"
+PATCH_URI="1.4-no-undefined.patch"
+
+PKG_NAMES="${NAME} ${NAME}0 ${NAME}-common ${NAME}-devel girepository-Accounts1.0 vala-accounts"
+libaccounts_glib_CONTENTS="usr/bin/*.exe usr/share/man/man1/"
+libaccounts_glib0_REQUIRES="libaccounts-glib-common"
+libaccounts_glib0_CONTENTS="usr/bin/cygaccounts-glib-0.dll"
+libaccounts_glib_common_CONTENTS="usr/share/doc/ usr/share/xml/"
+libaccounts_glib_devel_CONTENTS="usr/include/ usr/lib/lib* usr/lib/pkgconfig/ usr/share/gtk-doc/"
+girepository_Accounts1_0_CONTENTS="usr/*/gir*/Accounts-1.0.* ${PYTHON_SITELIB#/} ${PYTHON3_SITELIB#/}"
+vala_accounts_CONTENTS="usr/share/vala/vapi/accounts.*"
+PKG_IGNORE="usr/share/backup-framework/"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	python3into gi/overrides
+	dopython3 ${S}/pygobject/*.py
+	python3_optimize
+}
